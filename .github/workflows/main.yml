@@ -21,7 +21,9 @@ jobs:
 
     - name: Publish Standalone Executable
       # This compiles it into a single-file, self-contained Windows x64 .exe
-      run: dotnet publish -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -o ./publish-output
+      # Added -p:PlatformTarget=x64 to force compatibility with win-x64
+      run: dotnet publish -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:PlatformTarget=x64 -o ./publish-output
+      # run: dotnet publish -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -o ./publish-output
 
     - name: Upload Finished App
       uses: actions/upload-artifact@v4
