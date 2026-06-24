@@ -1,11 +1,11 @@
 name: Build Standalone App
 
 on:
-  workflow_dispatch: # Allows you to manually trigger this anytime from the GitHub UI
+  workflow_dispatch:
 
 jobs:
   publish:
-    runs-on: windows-latest # Windows is required to pack WinUI 3 / Windows apps
+    runs-on: windows-latest
 
     steps:
     - name: Checkout Code
@@ -14,19 +14,17 @@ jobs:
     - name: Setup .NET SDK
       uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: '8.0.x' # Matches your .NET 8 app version
+        dotnet-version: '8.0.x'
 
     - name: Restore Dependencies
       run: dotnet restore
 
-    - name: Publish Standalone Executable
-      # This compiles it into a single-file, self-contained Windows x64 .exe
-      # Added -p:PlatformTarget=x64 to force compatibility with win-x64
-      run: dotnet publish -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:PlatformTarget=x64 -o ./publish-output
-      # run: dotnet publish -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -o ./publish-output
+    - name: Publish True Standalone Executable
+      # We added WindowsAppSDK deployment overrides to pack absolutely everything into the output folder
+      run: dotnet publish -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:PlatformTarget=x64 -p:WindowsAppSDKPackageRoot=true -p:WindowsPackageType=None -o ./publish-output
 
     - name: Upload Finished App
       uses: actions/upload-artifact@v4
       with:
-        name: FarmManager-Standalone-App
+        name: FarmManager-True-Standalone
         path: ./publish-output/
