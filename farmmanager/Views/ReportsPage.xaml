@@ -1,0 +1,229 @@
+<Page
+    x:Class="farmmanager.Views.ReportsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <ScrollViewer>
+        <StackPanel Spacing="20" Padding="32,24">
+
+            <!-- Header -->
+            <StackPanel>
+                <TextBlock Text="Reports &amp; Export" Style="{StaticResource PageTitleStyle}"/>
+                <TextBlock Text="Generate cumulative Excel reports for workers, parcels, and activities"
+                           Foreground="{ThemeResource TextFillColorSecondaryBrush}" FontSize="13"/>
+            </StackPanel>
+
+            <!-- Date Range + Controls -->
+            <Border Style="{StaticResource CardStyle}">
+                <Grid ColumnSpacing="16">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Grid.Column="0" Text="From:" VerticalAlignment="Center" FontWeight="SemiBold"/>
+                    <CalendarDatePicker Grid.Column="1" x:Name="FromDatePicker" Width="160" PlaceholderText="Start date"/>
+                    <TextBlock Grid.Column="2" Text="To:" VerticalAlignment="Center" FontWeight="SemiBold"/>
+                    <CalendarDatePicker Grid.Column="3" x:Name="ToDatePicker" Width="160" PlaceholderText="End date"/>
+                    <Button Grid.Column="4" Content="Refresh" Click="Refresh_Click" Margin="8,0,0,0"/>
+                    <Button Grid.Column="5" Content="📊 Workers" Click="ExportWorkers_Click" Margin="8,0,0,0"/>
+                    <Button Grid.Column="6" Content="🌿 Parcels" Click="ExportParcels_Click" Margin="4,0,0,0"/>
+                    <Button Grid.Column="7" Content="⚙️ Activities" Click="ExportActivities_Click" Margin="4,0,0,0"/>
+                    <Button Grid.Column="8"
+                            Content="📥 Full Report"
+                            Style="{StaticResource AccentButtonStyle}"
+                            Click="ExportFull_Click"
+                            Margin="8,0,0,0"/>
+                </Grid>
+            </Border>
+
+            <!-- Status / Progress -->
+            <TextBlock x:Name="StatusText" FontSize="12"
+                       Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}"
+                       Visibility="Collapsed"/>
+            <ProgressBar x:Name="ProgressBar" IsIndeterminate="True" Visibility="Collapsed"/>
+
+            <!-- KPI Summary Row -->
+            <Grid ColumnSpacing="16">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <Border Grid.Column="0" Style="{StaticResource KpiCardStyle}">
+                    <StackPanel Spacing="4">
+                        <TextBlock Text="Total Expenditure" Style="{StaticResource SectionHeaderStyle}"/>
+                        <TextBlock x:Name="TotalText" Text="—" FontSize="28" FontWeight="Bold"
+                                   Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}"/>
+                        <TextBlock Text="FCFA" FontSize="11" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                    </StackPanel>
+                </Border>
+                <Border Grid.Column="1" Style="{StaticResource KpiCardStyle}">
+                    <StackPanel Spacing="4">
+                        <TextBlock Text="Total Work Days" Style="{StaticResource SectionHeaderStyle}"/>
+                        <TextBlock x:Name="DaysText" Text="—" FontSize="28" FontWeight="Bold"/>
+                        <TextBlock Text="entries logged" FontSize="11" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                    </StackPanel>
+                </Border>
+                <Border Grid.Column="2" Style="{StaticResource KpiCardStyle}">
+                    <StackPanel Spacing="4">
+                        <TextBlock Text="Workers Active" Style="{StaticResource SectionHeaderStyle}"/>
+                        <TextBlock x:Name="WorkersActiveText" Text="—" FontSize="28" FontWeight="Bold"/>
+                        <TextBlock Text="in this period" FontSize="11" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                    </StackPanel>
+                </Border>
+            </Grid>
+
+            <!-- Three Tabs: Workers | Parcels | Activities -->
+            <TabView x:Name="SummaryTabView" IsAddTabButtonVisible="False" TabWidthMode="SizeToContent">
+
+                <!-- Workers Tab -->
+                <TabViewItem Header="👷 Worker Summary" IsClosable="False">
+                    <Border Style="{StaticResource CardStyle}" Margin="0,8,0,0">
+                        <Grid RowSpacing="8">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            <Grid Grid.Row="0" Padding="4,0,4,8">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="2*"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="80"/>
+                                    <ColumnDefinition Width="100"/>
+                                    <ColumnDefinition Width="100"/>
+                                    <ColumnDefinition Width="140"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" Text="Worker" FontWeight="Bold" FontSize="12"/>
+                                <TextBlock Grid.Column="1" Text="Group" FontWeight="Bold" FontSize="12"/>
+                                <TextBlock Grid.Column="2" Text="Days" FontWeight="Bold" FontSize="12"/>
+                                <TextBlock Grid.Column="3" Text="Planned" FontWeight="Bold" FontSize="12"/>
+                                <TextBlock Grid.Column="4" Text="Attained" FontWeight="Bold" FontSize="12"/>
+                                <TextBlock Grid.Column="5" Text="Amount (FCFA)" FontWeight="Bold" FontSize="12" HorizontalAlignment="Right"/>
+                            </Grid>
+                            <ListView Grid.Row="1" x:Name="WorkerSummaryList" MaxHeight="350" SelectionMode="None">
+                                <ListView.ItemContainerStyle>
+                                    <Style TargetType="ListViewItem">
+                                        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                        <Setter Property="Padding" Value="4,6"/>
+                                    </Style>
+                                </ListView.ItemContainerStyle>
+                                <ListView.ItemTemplate>
+                                    <DataTemplate>
+                                        <Grid ColumnSpacing="8">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="2*"/>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="80"/>
+                                                <ColumnDefinition Width="100"/>
+                                                <ColumnDefinition Width="100"/>
+                                                <ColumnDefinition Width="140"/>
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock Grid.Column="0" Text="{Binding WorkerName}" FontWeight="SemiBold" FontSize="13"/>
+                                            <TextBlock Grid.Column="1" Text="{Binding Group}" FontSize="12"/>
+                                            <TextBlock Grid.Column="2" Text="{Binding TotalDays}" FontSize="12" HorizontalAlignment="Center"/>
+                                            <TextBlock Grid.Column="3" Text="{Binding TotalObjectivePlanned}" FontSize="12"/>
+                                            <TextBlock Grid.Column="4" Text="{Binding TotalObjectiveAttained}" FontSize="12"/>
+                                            <TextBlock Grid.Column="5"
+                                                Text="{Binding TotalAmountEarned, Converter={StaticResource DecimalToCurrencyConverter}}"
+                                                FontSize="13" FontWeight="SemiBold"
+                                                Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}"
+                                                HorizontalAlignment="Right"/>
+                                        </Grid>
+                                    </DataTemplate>
+                                </ListView.ItemTemplate>
+                            </ListView>
+                        </Grid>
+                    </Border>
+                </TabViewItem>
+
+                <!-- Parcels Tab -->
+                <TabViewItem Header="🌿 Parcel Expenditure" IsClosable="False">
+                    <Border Style="{StaticResource CardStyle}" Margin="0,8,0,0">
+                        <ListView x:Name="ParcelSummaryList" MaxHeight="380" SelectionMode="None">
+                            <ListView.ItemContainerStyle>
+                                <Style TargetType="ListViewItem">
+                                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                    <Setter Property="Padding" Value="4,6"/>
+                                </Style>
+                            </ListView.ItemContainerStyle>
+                            <ListView.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid ColumnSpacing="12">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="2*"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="80"/>
+                                            <ColumnDefinition Width="120"/>
+                                            <ColumnDefinition Width="160"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Grid.Column="0" Text="{Binding ParcelName}" FontWeight="SemiBold" FontSize="13"/>
+                                        <TextBlock Grid.Column="1" Text="{Binding ParcelCode}" FontSize="12"
+                                                   Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                                        <TextBlock Grid.Column="2" Text="{Binding TotalEntries}" FontSize="12" HorizontalAlignment="Center"/>
+                                        <TextBlock Grid.Column="3" Text="{Binding TotalAreaWorked}" FontSize="12"/>
+                                        <TextBlock Grid.Column="4"
+                                            Text="{Binding TotalAmountSpent, Converter={StaticResource DecimalToCurrencyConverter}}"
+                                            FontSize="13" FontWeight="SemiBold"
+                                            Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}"
+                                            HorizontalAlignment="Right"/>
+                                    </Grid>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
+                    </Border>
+                </TabViewItem>
+
+                <!-- Activities Tab -->
+                <TabViewItem Header="⚙️ Activity Expenditure" IsClosable="False">
+                    <Border Style="{StaticResource CardStyle}" Margin="0,8,0,0">
+                        <ListView x:Name="ActivitySummaryList" MaxHeight="380" SelectionMode="None">
+                            <ListView.ItemContainerStyle>
+                                <Style TargetType="ListViewItem">
+                                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                    <Setter Property="Padding" Value="4,6"/>
+                                </Style>
+                            </ListView.ItemContainerStyle>
+                            <ListView.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid ColumnSpacing="12">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="2*"/>
+                                            <ColumnDefinition Width="80"/>
+                                            <ColumnDefinition Width="60"/>
+                                            <ColumnDefinition Width="100"/>
+                                            <ColumnDefinition Width="100"/>
+                                            <ColumnDefinition Width="160"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Grid.Column="0" Text="{Binding ActivityName}" FontWeight="SemiBold" FontSize="13"/>
+                                        <TextBlock Grid.Column="1" Text="{Binding Unit}" FontSize="12"
+                                                   Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                                        <TextBlock Grid.Column="2" Text="{Binding TotalEntries}" FontSize="12" HorizontalAlignment="Center"/>
+                                        <TextBlock Grid.Column="3" Text="{Binding TotalObjectivePlanned}" FontSize="12"/>
+                                        <TextBlock Grid.Column="4" Text="{Binding TotalObjectiveAttained}" FontSize="12"/>
+                                        <TextBlock Grid.Column="5"
+                                            Text="{Binding TotalAmountSpent, Converter={StaticResource DecimalToCurrencyConverter}}"
+                                            FontSize="13" FontWeight="SemiBold"
+                                            Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}"
+                                            HorizontalAlignment="Right"/>
+                                    </Grid>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
+                    </Border>
+                </TabViewItem>
+
+            </TabView>
+
+        </StackPanel>
+    </ScrollViewer>
+</Page>

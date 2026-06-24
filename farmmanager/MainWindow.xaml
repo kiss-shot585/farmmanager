@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window
+    x:Class="farmmanager.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:farmmanager"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Title="farmmanager">
+
+    <Window.SystemBackdrop>
+        <MicaBackdrop />
+    </Window.SystemBackdrop>
+
+    <Grid>
+        <NavigationView
+        x:Name="NavView"
+        PaneTitle="Plantation Manager"
+        IsBackButtonVisible="Collapsed"
+        SelectionChanged="NavView_SelectionChanged"
+        OpenPaneLength="240">
+
+            <NavigationView.MenuItems>
+                <NavigationViewItem
+                Tag="dashboard"
+                Content="Dashboard"
+                Icon="Home"/>
+                <NavigationViewItem
+                Tag="entry"
+                Content="Work Entry"
+                Icon="Add"/>
+                <NavigationViewItemSeparator/>
+                <NavigationViewItem
+                Tag="reports"
+                Content="Reports &amp; Export"
+                Icon="PreviewLink"/>
+                <NavigationViewItemSeparator/>
+                <NavigationViewItem
+                Tag="workers"
+                Content="Workers"
+                Icon="People"/>
+                <NavigationViewItem
+                Tag="parcels"
+                Content="Parcels"
+                Icon="Map"/>
+                <NavigationViewItem
+                Tag="activities"
+                Content="Activities"
+                Icon="List"/>
+            </NavigationView.MenuItems>
+
+            
+
+            <!-- Content frame -->
+            <Frame x:Name="ContentFrame" Margin="0"/>
+        </NavigationView>
+    </Grid>
+</Window>

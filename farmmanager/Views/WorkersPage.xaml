@@ -1,0 +1,87 @@
+<Page
+    x:Class="farmmanager.Views.WorkersPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Grid Padding="32,24" ColumnSpacing="20">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="320"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- Form Panel -->
+        <Border Grid.Column="0" Style="{StaticResource CardStyle}" VerticalAlignment="Top">
+            <StackPanel Spacing="16">
+                <Grid>
+                    <TextBlock Text="Workers" Style="{StaticResource PageTitleStyle}"/>
+                    <Button x:Name="NewWorkerBtn" Content="+ New" HorizontalAlignment="Right"
+                            VerticalAlignment="Center" Click="NewWorker_Click"/>
+                </Grid>
+
+                <TextBlock Text="NAME *" Style="{StaticResource SectionHeaderStyle}"/>
+                <TextBox x:Name="NameTxt" PlaceholderText="Full name"/>
+
+                <TextBlock Text="GROUP *" Style="{StaticResource SectionHeaderStyle}"/>
+                <TextBox x:Name="GroupTxt" PlaceholderText="e.g. Team A, North Group"/>
+
+                <TextBlock Text="PHONE" Style="{StaticResource SectionHeaderStyle}"/>
+                <TextBox x:Name="PhoneTxt" PlaceholderText="+237 ..."/>
+
+                <Grid ColumnSpacing="8" Margin="0,8,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <Button Grid.Column="0" Content="Save Worker" HorizontalAlignment="Stretch"
+                            Style="{StaticResource AccentButtonStyle}" Click="Save_Click"/>
+                    <Button Grid.Column="1" Content="Deactivate"
+                            x:Name="DeactivateBtn" Visibility="Collapsed"
+                            Click="Deactivate_Click"/>
+                </Grid>
+                <TextBlock x:Name="StatusTxt" FontSize="12"
+                           Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}"/>
+            </StackPanel>
+        </Border>
+
+        <!-- Workers List -->
+        <Border Grid.Column="1" Style="{StaticResource CardStyle}">
+            <StackPanel Spacing="12">
+                <TextBlock Text="All Workers" FontSize="15" FontWeight="SemiBold"/>
+                <ListView x:Name="WorkersList" SelectionChanged="Workers_SelectionChanged">
+                    <ListView.ItemContainerStyle>
+                        <Style TargetType="ListViewItem">
+                            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                            <Setter Property="Padding" Value="12,8"/>
+                        </Style>
+                    </ListView.ItemContainerStyle>
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <Grid ColumnSpacing="12">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="140"/>
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Grid.Column="0">
+                                    <TextBlock Text="{Binding Name}" FontWeight="SemiBold" FontSize="14"/>
+                                </StackPanel>
+                                <Border Grid.Column="1"
+                                        Background="{ThemeResource AccentFillColorTertiaryBrush}"
+                                        CornerRadius="4" Padding="8,2"
+                                        HorizontalAlignment="Left" VerticalAlignment="Center">
+                                    <TextBlock Text="{Binding Group}" FontSize="12"/>
+                                </Border>
+                                <TextBlock Grid.Column="2"
+                                           Text="{Binding PhoneNumber}"
+                                           FontSize="12"
+                                           Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                           VerticalAlignment="Center"/>
+                            </Grid>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+            </StackPanel>
+        </Border>
+    </Grid>
+</Page>

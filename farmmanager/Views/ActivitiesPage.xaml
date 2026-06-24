@@ -1,0 +1,103 @@
+<Page
+    x:Class="farmmanager.Views.ActivitiesPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Grid Padding="32,24" ColumnSpacing="20">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="340"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- Form -->
+        <Border Grid.Column="0" Style="{StaticResource CardStyle}" VerticalAlignment="Top">
+            <StackPanel Spacing="14">
+                <Grid>
+                    <TextBlock Text="Activities" Style="{StaticResource PageTitleStyle}"/>
+                    <Button Content="+ New" HorizontalAlignment="Right" VerticalAlignment="Center" Click="New_Click"/>
+                </Grid>
+
+                <TextBlock Text="ACTIVITY NAME *" Style="{StaticResource SectionHeaderStyle}"/>
+                <TextBox x:Name="NameTxt" PlaceholderText="e.g. Weeding, Harvesting"/>
+
+                <TextBlock Text="UNIT" Style="{StaticResource SectionHeaderStyle}"/>
+                <ComboBox x:Name="UnitCombo" HorizontalAlignment="Stretch" SelectedIndex="0">
+                    <ComboBoxItem Content="day"/>
+                    <ComboBoxItem Content="hectare"/>
+                    <ComboBoxItem Content="kg"/>
+                    <ComboBoxItem Content="tree"/>
+                    <ComboBoxItem Content="unit"/>
+                    <ComboBoxItem Content="hour"/>
+                </ComboBox>
+
+                <TextBlock Text="UNIT RATE (FCFA)" Style="{StaticResource SectionHeaderStyle}"/>
+                <TextBlock Text="Amount paid per unit of work completed"
+                           FontSize="11" Foreground="{ThemeResource TextFillColorTertiaryBrush}"/>
+                <NumberBox x:Name="RateBox" Minimum="0" PlaceholderText="0" SpinButtonPlacementMode="Compact"/>
+
+                <TextBlock Text="DESCRIPTION" Style="{StaticResource SectionHeaderStyle}"/>
+                <TextBox x:Name="DescTxt" PlaceholderText="Optional description..."
+                         TextWrapping="Wrap" Height="64" AcceptsReturn="True"/>
+
+                <Grid ColumnSpacing="8" Margin="0,4,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <Button Grid.Column="0" Content="Save Activity" HorizontalAlignment="Stretch"
+                            Style="{StaticResource AccentButtonStyle}" Click="Save_Click"/>
+                    <Button Grid.Column="1" Content="Deactivate"
+                            x:Name="DeactivateBtn" Visibility="Collapsed" Click="Deactivate_Click"/>
+                </Grid>
+                <TextBlock x:Name="StatusTxt" FontSize="12"
+                           Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}"/>
+            </StackPanel>
+        </Border>
+
+        <!-- List -->
+        <Border Grid.Column="1" Style="{StaticResource CardStyle}">
+            <StackPanel Spacing="12">
+                <TextBlock Text="All Activities" FontSize="15" FontWeight="SemiBold"/>
+                <ListView x:Name="ActivitiesList" SelectionChanged="Activities_SelectionChanged">
+                    <ListView.ItemContainerStyle>
+                        <Style TargetType="ListViewItem">
+                            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                            <Setter Property="Padding" Value="12,8"/>
+                        </Style>
+                    </ListView.ItemContainerStyle>
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <Grid ColumnSpacing="12">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="80"/>
+                                    <ColumnDefinition Width="160"/>
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Grid.Column="0">
+                                    <TextBlock Text="{Binding Name}" FontWeight="SemiBold" FontSize="14"/>
+                                    <TextBlock Text="{Binding Description}" FontSize="12"
+                                               Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                               TextTrimming="CharacterEllipsis"/>
+                                </StackPanel>
+                                <Border Grid.Column="1"
+                                        Background="{ThemeResource AccentFillColorTertiaryBrush}"
+                                        CornerRadius="4" Padding="8,2"
+                                        HorizontalAlignment="Left" VerticalAlignment="Center">
+                                    <TextBlock Text="{Binding Unit}" FontSize="12"/>
+                                </Border>
+                                <StackPanel Grid.Column="2" VerticalAlignment="Center">
+                                    <TextBlock Text="{Binding UnitRate}"
+                                               FontSize="13" FontWeight="SemiBold"
+                                               Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}"/>
+                                    <TextBlock Text="FCFA / unit" FontSize="11"
+                                               Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                                </StackPanel>
+                            </Grid>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+            </StackPanel>
+        </Border>
+    </Grid>
+</Page>

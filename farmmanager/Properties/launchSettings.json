@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "farmmanager (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "farmmanager (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}
